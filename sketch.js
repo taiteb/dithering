@@ -9,18 +9,18 @@ let c
 
 // preload image for performance
 function preload() {
-  img = loadImage('/eggy.jpg')
+  img = loadImage('/utopia.jpg')
   pixelDensity(2)
 }
 
 function setup() {
   // resize to reduce load on pixel data extraction
-  img.resize(400, 0)
+  // img.resize(400, 0)
   background(255)
   wid = img.width
   hig = img.height
   // resize back up for ascii character clarity 
-  c = createCanvas(wid * 5, hig * 5);
+  c = createCanvas(wid, hig);
   // load source image pixels, iterate by rows/cols, extract pixel data 
   img.loadPixels();
   for (let i = 0; i < hig; i += 5) {
@@ -42,34 +42,40 @@ function setup() {
   background(255)
   let halftoneValues = [15, 45, 75];
   // let rgbColors = ["#FF0000", "#00FF00", "#0000FF"]
-  let rgbColors = ["#EF798A", "#33EA89", "#48D8E8"]
+  let rgbColors = ["#E9D985", "#93d995", "#2DC7FF"]
   // scale text size to size of image, assigns alignment so things can easily be mapped by pixel location
   let txtsiz = (height / newimg.length)
   textSize(txtsiz)
   textAlign(LEFT);
   textAlign(TOP);
+  let embiggening = 5
   // draws ascii character to screen, multiplying index by size of character for proper spacing
-  for (let h = 0; h < halftoneValues.length; h++) {
-    for (let i = 0; i < newimg.length; i++) {
-      for (let j = 0; j < newimg[i].length; j++) {
+  for (let i = 0; i < newimg.length; i++) {
+    for (let j = 0; j < newimg[i].length; j++) {
+      // Constants for logarithmic scaling
+      const a = embiggening * 2;  // Max value
+      const b = 0.2;  // Adjust scaling behavior
+
+      // Apply logarithmic scaling
+      let stk = a * (Math.exp(b * newimg[i][j][3]) - 1);  // Adding 1 to prevent log(0) at h = 0
+      // let stk = newimg[i][j][h]
+      strokeWeight(stk + 1)
+      stroke('black')
+      point((j * embiggening), (i * embiggening))
+      for (let h = 0; h < halftoneValues.length; h++) {
         // text(newimg[i][j], j*txtsiz, i*txtsiz)
         halftone = halftoneValues[h]
         // xHT = (j * cos(halftone)) / (j * sin(halftone));
         // yHT = (i * cos(halftone)) / (i * sin(halftone));
-        r = 6
+        r = embiggening * 1.25
         xHT = r * cos(halftone);
         yHT = r * sin(halftone);
-
-        // Constants for logarithmic scaling
-        const a = 50;  // Max value
-        const b = 0.2;  // Adjust scaling behavior
-
-        // Apply logarithmic scaling
+        // Apply exponential scaling
         let stk = a * (Math.exp(b * newimg[i][j][h]) - 1);  // Adding 1 to prevent log(0) at h = 0
         // let stk = newimg[i][j][h]
         strokeWeight(stk + 1)
         stroke(rgbColors[h])
-        point((j * 15) + xHT, (i * 15) + yHT)
+        point((j * embiggening) + xHT, (i * embiggening) + yHT)
       }
     }
   }
@@ -87,10 +93,10 @@ function rgbAvgToAscii(r, g, b) {
   // return adjustedAvg
   // return [r * 0.2126, g * 0.7152, b * 0.0722]
   // console.log([((255/r) * 0.2126), ((g / 255) * 0.5152), ((b / 255) * 0.0722)])
-  if ((g/255) > 0.25) {
-    console.log(g, (g/255))
+  if ((g / 255) > 0.25) {
+    console.log(g, (g / 255))
   }
-  return [((r/255)), ((g/255)), ((b/255))]
+  return [((r / 255)), ((g / 255)), ((b / 255)), (1-((r + g + b) / 3) / 255)]
 }
 
 function mouseClicked() {
