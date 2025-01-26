@@ -5,7 +5,7 @@ let newimg = []
 let c
 let rgbColors = ["#E9D985", "#93d995", "#2DC7FF"]
 let embiggening = 5
-let dotSize = 3.5
+let dotSize = 5
 
 
 // preload image for performance
@@ -121,6 +121,7 @@ embiggener.addEventListener('change', (e) => {
 let dotSizer = document.getElementById('dotSize')
 dotSizer.addEventListener('change', (e) => {
   dotSize = e.target.value
+  console.log(dotSize)
   setup()
 })
 let saveBtn = document.getElementById('saveBtn')
