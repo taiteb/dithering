@@ -6,10 +6,15 @@ let ascii = ['@', '%', '#', '*', '+', '-', ':', '.']
 // 2d array that will store ascii-converted pixel data 
 let newimg = []
 let c
+let rgbColors = ["#E9D985", "#93d995", "#2DC7FF"]
+let embiggening = 5
+
+
 
 // preload image for performance
 function preload() {
-  img = loadImage('/utopia.jpg')
+  let imgSrc = localStorage.getItem('img-BASE64')
+  img =  imgSrc? loadImage(imgSrc) : loadImage('/cat3.jpeg')
   pixelDensity(2)
 }
 
@@ -17,10 +22,12 @@ function setup() {
   // resize to reduce load on pixel data extraction
   // img.resize(400, 0)
   background(255)
+  newimg = []
   wid = img.width
   hig = img.height
   // resize back up for ascii character clarity 
   c = createCanvas(wid, hig);
+  c.parent('imgCanvas')
   // load source image pixels, iterate by rows/cols, extract pixel data 
   img.loadPixels();
   for (let i = 0; i < hig; i += 5) {
@@ -42,18 +49,14 @@ function setup() {
   background(255)
   let halftoneValues = [15, 45, 75];
   // let rgbColors = ["#FF0000", "#00FF00", "#0000FF"]
-  let rgbColors = ["#E9D985", "#93d995", "#2DC7FF"]
-  // scale text size to size of image, assigns alignment so things can easily be mapped by pixel location
-  let txtsiz = (height / newimg.length)
-  textSize(txtsiz)
-  textAlign(LEFT);
-  textAlign(TOP);
-  let embiggening = 5
+
+
+
   // draws ascii character to screen, multiplying index by size of character for proper spacing
   for (let i = 0; i < newimg.length; i++) {
     for (let j = 0; j < newimg[i].length; j++) {
       // Constants for logarithmic scaling
-      const a = embiggening * 2;  // Max value
+      const a = embiggening * 3.5;  // Max value
       const b = 0.2;  // Adjust scaling behavior
 
       // Apply logarithmic scaling
@@ -82,23 +85,41 @@ function setup() {
 }
 
 function draw() {
+
 }
 
 function rgbAvgToAscii(r, g, b) {
-  // This weights the values based on luminosity, scales it to 255, and accesses 
-  // the ascii character stored at that index (0-9)
-  let avg = 1 - ((r * 0.2126 + g * 0.7152 + b * 0.0322) / 255)
-  let adjustedAvg = ceil(avg * 10)
-  // console.log(adjustedAvg)
-  // return adjustedAvg
-  // return [r * 0.2126, g * 0.7152, b * 0.0722]
-  // console.log([((255/r) * 0.2126), ((g / 255) * 0.5152), ((b / 255) * 0.0722)])
-  if ((g / 255) > 0.25) {
-    console.log(g, (g / 255))
-  }
   return [((r / 255)), ((g / 255)), ((b / 255)), (1-((r + g + b) / 3) / 255)]
 }
 
-function mouseClicked() {
-  save(c, `img.png`)
-}
+// function mouseClicked() {
+//   save(c, `img.png`)
+// }
+
+let imgCanvas = document.getElementById('imgCanvas')
+
+let redPicker = document.getElementById('redPicker')
+redPicker.addEventListener('change', (e) => {
+  rgbColors[0] = e.target.value
+  setup()
+})
+let greenPicker = document.getElementById('greenPicker')
+greenPicker.addEventListener('change', (e) => {
+  rgbColors[1] = e.target.value
+  setup()
+})
+let bluePicker = document.getElementById('bluePicker')
+bluePicker.addEventListener('change', (e) => {
+  rgbColors[2] = e.target.value
+  setup()
+})
+let embiggener = document.getElementById('embiggener')
+embiggener.addEventListener('change', (e) => {
+  embiggening = e.target.value
+  setup()
+})
+
+window.preload = preload
+window.setup = setup
+window.draw = draw
+new p5();
