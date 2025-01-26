@@ -123,6 +123,10 @@ dotSizer.addEventListener('change', (e) => {
   dotSize = e.target.value
   setup()
 })
+let saveBtn = document.getElementById('saveBtn')
+saveBtn.addEventListener('click', () => {
+  save(c, 'halftone.png')
+})
 
 window.preload = preload
 window.setup = setup
