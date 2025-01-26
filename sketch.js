@@ -1,27 +1,27 @@
 let img
 let wid
 let hig
-// ASCII characters from darkest to brightest
-let ascii = ['@', '%', '#', '*', '+', '-', ':', '.']
-// 2d array that will store ascii-converted pixel data 
 let newimg = []
 let c
 let rgbColors = ["#E9D985", "#93d995", "#2DC7FF"]
 let embiggening = 5
-
+let dotSize = 3.5
 
 
 // preload image for performance
 function preload() {
   let imgSrc = localStorage.getItem('img-BASE64')
   img =  imgSrc? loadImage(imgSrc) : loadImage('/cat3.jpeg')
-  pixelDensity(2)
+  pixelDensity(1)
 }
 
 function setup() {
   // resize to reduce load on pixel data extraction
   // img.resize(400, 0)
   background(255)
+  if (img.width > 1000) {
+    img.resize(1000, 0)
+  }
   newimg = []
   wid = img.width
   hig = img.height
@@ -56,7 +56,7 @@ function setup() {
   for (let i = 0; i < newimg.length; i++) {
     for (let j = 0; j < newimg[i].length; j++) {
       // Constants for logarithmic scaling
-      const a = embiggening * 3.5;  // Max value
+      const a = embiggening * dotSize;  // Max value
       const b = 0.2;  // Adjust scaling behavior
 
       // Apply logarithmic scaling
@@ -116,6 +116,11 @@ bluePicker.addEventListener('change', (e) => {
 let embiggener = document.getElementById('embiggener')
 embiggener.addEventListener('change', (e) => {
   embiggening = e.target.value
+  setup()
+})
+let dotSizer = document.getElementById('dotSize')
+dotSizer.addEventListener('change', (e) => {
+  dotSize = e.target.value
   setup()
 })
 

@@ -20,11 +20,17 @@
   <div id="user-tools">
     <input id="userImage" type="file" accept="image/png, image/gif, image/jpeg">
     <div id="colorPickers">
-      <input id='redPicker' type="color" value="#E9D985">
-      <input id='greenPicker' type="color" value="#93d995">
-      <input id='bluePicker' type="color" value="#2DC7FF">
+      <label for="redPicker">Red</label>
+      <input name='redPicker' id='redPicker' type="color" value="#E9D985">
+      <label for="greenPicker">Green</label>
+      <input name='greenPicker' id='greenPicker' type="color" value="#93d995">
+      <label for="bluePicker">Blue</label>
+      <input name="bluePicker" id='bluePicker' type="color" value="#2DC7FF">
     </div>
+    <label for="embiggener">Embiggening: </label>
     <input type="range" name="embiggener" id="embiggener" min="1" max="5">
+    <label for="dotSize">Dot size:</label>
+    <input type="range" name="dotSize" id="dotSize" min="3" max="8">
   </div>
   <script>
     function getBase64(file) {
