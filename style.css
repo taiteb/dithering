@@ -4,7 +4,7 @@ body {
   /* flex-direction: column; */
   justify-content: center;
   position: relative;
-  gap: 10px;
+  /* gap: 10px; */
   height: auto;
   background-color: #E2E4F6;
   color: #DEFFFC;

@@ -6,7 +6,7 @@ let c
 let rgbColors = ["#E9D985", "#93d995", "#2DC7FF"]
 // let rgbColors = ["#E26D5A", "#FF9B71", "#49516F"]
 let embiggening = 5
-let dotSize = 4
+let dotSize = 3.66
 let renderCanvas
 let canvasWidth
 let canvasHeight
@@ -65,17 +65,45 @@ function setup() {
       // Apply logarithmic scaling
       let stk = a * (Math.exp(b * newimg[i][j][3]) - 1);  // Adding 1 to prevent log(0) at h = 0
       // let stk = newimg[i][j][h]
-      renderCanvas.strokeWeight(stk * 1.25)
+      renderCanvas.strokeWeight(stk * 1.55)
       renderCanvas.stroke('black')
       renderCanvas.point((j * embiggening), (i * embiggening))
-      for (let h = 0; h < halftoneValues.length; h++) {
+      // for (let h = 0; h < halftoneValues.length; h++) {
+      //   // text(newimg[i][j], j*txtsiz, i*txtsiz)
+      //   halftone = halftoneValues[h]
+      //   // xHT = (j * cos(halftone)) / (j * sin(halftone));
+      //   // yHT = (i * cos(halftone)) / (i * sin(halftone));
+      //   r = embiggening * 1.25
+      //   xHT = r * cos(halftone);
+      //   yHT = r * sin(halftone);
+      //   // Apply exponential scaling
+      //   let stk = a * (Math.exp(b * newimg[i][j][h]) - 1);  // Adding 1 to prevent log(0) at h = 0
+      //   // let stk = newimg[i][j][h]
+      //   renderCanvas.strokeWeight(stk)
+      //   renderCanvas.stroke(rgbColors[h])
+      //   renderCanvas.point((j * embiggening) + xHT, (i * embiggening) + yHT)
+      // }
+    }
+  }
+
+  for (let i = 0; i < newimg.length; i++) {
+    for (let j = 0; j < newimg[i].length; j++) {
+      // Constants for logarithmic scaling
+      const a = embiggening * dotSize;  // Max value
+      const b = 0.2;  // Adjust scaling behavior
+
+    for (let h = 0; h < halftoneValues.length; h++) {
         // text(newimg[i][j], j*txtsiz, i*txtsiz)
         halftone = halftoneValues[h]
         // xHT = (j * cos(halftone)) / (j * sin(halftone));
         // yHT = (i * cos(halftone)) / (i * sin(halftone));
-        r = embiggening * 1.25
-        xHT = r * cos(halftone);
-        yHT = r * sin(halftone);
+
+        // this is experimental so values are set to 0 
+        let randX = random(-0.0, 0.0)
+        let randY = random(-0.0, 0.0)
+        r = embiggening * 0.95
+        xHT = r * cos(halftone + randX);
+        yHT = r * sin(halftone + randY);
         // Apply exponential scaling
         let stk = a * (Math.exp(b * newimg[i][j][h]) - 1);  // Adding 1 to prevent log(0) at h = 0
         // let stk = newimg[i][j][h]
