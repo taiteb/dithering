@@ -4,29 +4,32 @@ let hig
 let newimg = []
 let c
 let rgbColors = ["#E9D985", "#93d995", "#2DC7FF"]
+// let rgbColors = ["#E26D5A", "#FF9B71", "#49516F"]
 let embiggening = 5
-let dotSize = 5
-
+let dotSize = 3.66
+let renderCanvas
+let canvasWidth
+let canvasHeight
 
 // preload image for performance
 function preload() {
   let imgSrc = localStorage.getItem('img-BASE64')
   img =  imgSrc? loadImage(imgSrc) : loadImage('/cat3.jpeg')
-  pixelDensity(1)
+  // pixelDensity(2)
 }
 
 function setup() {
-  // resize to reduce load on pixel data extraction
-  // img.resize(400, 0)
   background(255)
-  if (img.width > 1000) {
-    img.resize(1000, 0)
-  }
   newimg = []
   wid = img.width
   hig = img.height
+
+  aspectRatio = hig / wid
+  canvasWidth = windowWidth * 0.55
+  canvasHeight = canvasWidth * aspectRatio
+
   // resize back up for ascii character clarity 
-  c = createCanvas(wid, hig);
+  c = createCanvas(canvasWidth, canvasHeight);
   c.parent('imgCanvas')
   // load source image pixels, iterate by rows/cols, extract pixel data 
   img.loadPixels();
@@ -46,11 +49,11 @@ function setup() {
     newimg.push(row)
   }
   img.updatePixels()
-  background(255)
+  // background(255)
   let halftoneValues = [15, 45, 75];
-  // let rgbColors = ["#FF0000", "#00FF00", "#0000FF"]
 
-
+  renderCanvas = createGraphics(wid, hig);
+  renderCanvas.background(180)
 
   // draws ascii character to screen, multiplying index by size of character for proper spacing
   for (let i = 0; i < newimg.length; i++) {
@@ -62,30 +65,59 @@ function setup() {
       // Apply logarithmic scaling
       let stk = a * (Math.exp(b * newimg[i][j][3]) - 1);  // Adding 1 to prevent log(0) at h = 0
       // let stk = newimg[i][j][h]
-      strokeWeight(stk + 1)
-      stroke('black')
-      point((j * embiggening), (i * embiggening))
-      for (let h = 0; h < halftoneValues.length; h++) {
+      renderCanvas.strokeWeight(stk * 1.55)
+      renderCanvas.stroke('black')
+      renderCanvas.point((j * embiggening), (i * embiggening))
+      // for (let h = 0; h < halftoneValues.length; h++) {
+      //   // text(newimg[i][j], j*txtsiz, i*txtsiz)
+      //   halftone = halftoneValues[h]
+      //   // xHT = (j * cos(halftone)) / (j * sin(halftone));
+      //   // yHT = (i * cos(halftone)) / (i * sin(halftone));
+      //   r = embiggening * 1.25
+      //   xHT = r * cos(halftone);
+      //   yHT = r * sin(halftone);
+      //   // Apply exponential scaling
+      //   let stk = a * (Math.exp(b * newimg[i][j][h]) - 1);  // Adding 1 to prevent log(0) at h = 0
+      //   // let stk = newimg[i][j][h]
+      //   renderCanvas.strokeWeight(stk)
+      //   renderCanvas.stroke(rgbColors[h])
+      //   renderCanvas.point((j * embiggening) + xHT, (i * embiggening) + yHT)
+      // }
+    }
+  }
+
+  for (let i = 0; i < newimg.length; i++) {
+    for (let j = 0; j < newimg[i].length; j++) {
+      // Constants for logarithmic scaling
+      const a = embiggening * dotSize;  // Max value
+      const b = 0.2;  // Adjust scaling behavior
+
+    for (let h = 0; h < halftoneValues.length; h++) {
         // text(newimg[i][j], j*txtsiz, i*txtsiz)
         halftone = halftoneValues[h]
         // xHT = (j * cos(halftone)) / (j * sin(halftone));
         // yHT = (i * cos(halftone)) / (i * sin(halftone));
-        r = embiggening * 1.25
-        xHT = r * cos(halftone);
-        yHT = r * sin(halftone);
+
+        // this is experimental so values are set to 0 
+        let randX = random(-0.0, 0.0)
+        let randY = random(-0.0, 0.0)
+        r = embiggening * 0.95
+        xHT = r * cos(halftone + randX);
+        yHT = r * sin(halftone + randY);
         // Apply exponential scaling
         let stk = a * (Math.exp(b * newimg[i][j][h]) - 1);  // Adding 1 to prevent log(0) at h = 0
         // let stk = newimg[i][j][h]
-        strokeWeight(stk + 1)
-        stroke(rgbColors[h])
-        point((j * embiggening) + xHT, (i * embiggening) + yHT)
+        renderCanvas.strokeWeight(stk)
+        renderCanvas.stroke(rgbColors[h])
+        renderCanvas.point((j * embiggening) + xHT, (i * embiggening) + yHT)
       }
     }
   }
+  // c.image(renderCanvas, 0, 0)
 }
 
 function draw() {
-
+  image(renderCanvas, 0, 0, canvasWidth, canvasHeight)
 }
 
 function rgbAvgToAscii(r, g, b) {
@@ -126,7 +158,7 @@ dotSizer.addEventListener('change', (e) => {
 })
 let saveBtn = document.getElementById('saveBtn')
 saveBtn.addEventListener('click', () => {
-  save(c, 'halftone.png')
+  save(renderCanvas, 'halftone.png')
 })
 
 window.preload = preload
